@@ -32,7 +32,7 @@ const setTarget = ({ status = true }) => {
 }
 
 
-export const connect = ({ args = [], headless = 'auto', customConfig = {}, proxy = {}, skipTarget = [], fingerprint = true, turnstile = false, connectOption = {}, tf = true }) => {
+export const connect = ({ args = [], headless = 'auto', customConfig = {}, proxy = {}, skipTarget = [], fingerprint = true, turnstile = false, connectOption = {}, tf = true, plugins = [] }) => {
     return new Promise(async (resolve, reject) => {
 
         global_target_status = tf
@@ -44,6 +44,11 @@ export const connect = ({ args = [], headless = 'auto', customConfig = {}, proxy
             proxy: proxy
         })
 
+        // register plugins
+        for(let plugin of plugins) {
+            puppeteer.use(plugin)
+        }
+
         const browser = await puppeteer.connect({
             targetFilter: (target) => targetFilter({ target: target, skipTarget: skipTarget }),
             browserWSEndpoint: chromeSession.browserWSEndpoint,
@@ -53,6 +58,12 @@ export const connect = ({ args = [], headless = 'auto', customConfig = {}, proxy
         var page = await browser.pages()
 
         page = page[0]
+
+        // register plugins for the already created page
+        for(let plugin of plugins) {
+            if(plugin.onPageCreated) 
+                plugin.onPageCreated(page)
+        }
 
         if (proxy && proxy.username && proxy.username.length > 0) {
             await page.authenticate({ username: proxy.username, password: proxy.password });

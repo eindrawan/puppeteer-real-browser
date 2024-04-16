@@ -81,6 +81,8 @@ connect({
 
     connectOption: {},
 
+    plugins: [],
+
     tf: true,
 
     // proxy:{
@@ -115,6 +117,8 @@ connect({
 **turnstile:** Cloudflare Turnstile automatically clicks on Captchas if set to true
 
 **connectOption:** The variables you send when connecting to chromium created with puppeteer.connect are added
+
+**plugins:** List of puppeter-extra-plugin that you want to add
 
 **tf:** We use targetfilter to avoid detection. This feature prevents the opening of new pages and some startup options. For this reason, we have added a feature to turn off the filter when starting the browser. This filter can also be removed later with the setTarget function.
 
